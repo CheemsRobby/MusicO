@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>登录</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        /* 复用 index.html 的样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background-color: #111111;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #ffffff;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            color: #888;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .login-form input[type="text"],
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .login-form input[type="submit"] {
+            background-color: #ff5500;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-form input[type="submit"]:hover {
+            background-color: #ff6622;
+        }
+
+        .register-link {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .register-link a {
+            color: #ff5500;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">MUSIC+</div>
+        <nav>
+            <a href="/" class="nav-item">首页</a>
+            <a href="#" class="nav-item" id="discovery-link">发现</a>
+            {% if user.is_staff %}
+            <a href="{% url 'upload_music' %}" class="nav-item">库</a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header class="header">
+            <h1 class="section-title">登录</h1>
+        </header>
+
+        <form class="login-form" method="post">
+            {% csrf_token %}
+            <label for="username">用户名</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">密码</label>
+            <input type="password" id="password" name="password" required>
+            <input type="submit" value="登录">
+        </form>
+
+        <div class="register-link">
+            <p>还没有账号？<a href="{% url 'register' %}">注册</a></p>
+        </div>
+    </div>
+</body>
+</html>

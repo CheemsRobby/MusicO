@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>音乐上传</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        /* 复用 index.html 的样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background-color: #111111;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #ffffff;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            color: #888;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .upload-form {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .upload-form label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .upload-form input[type="file"],
+        .upload-form input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .upload-form input[type="submit"] {
+            background-color: #ff5500;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .upload-form input[type="submit"]:hover {
+            background-color: #ff6622;
+            * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .body{
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background-color: #111111;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #ffffff;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            color: #888;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .upload-container {
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .upload-container h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .upload-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .upload-form input,
+        .upload-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .upload-form button {
+            background-color: #ff5500;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-form button:hover {
+            background-color: #ff6a24;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">MUSIC+</div>
+        <nav>
+            <a href="/" class="nav-item">首页</a>
+            <a href="#" class="nav-item" id="discovery-link">发现</a>
+            <a href="{% url 'upload_music' %}" class="nav-item">库</a>
+
+        </nav>
+    </div>
+
+
+ <div class="main-content">
+
+        <div class="upload-container">
+            <h2>上传新音乐</h2>
+            <form class="upload-form" action="#" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="title">歌曲标题</label>
+                <input type="text" id="title" name="title" required>
+
+                <label for="artist">艺术家</label>
+                <select id="artist" name="artist">
+                    <!-- 这里可以通过Django模板动态填充艺术家列表 -->
+                    <option value="1">艺术家1</option>
+                    <option value="2">艺术家2</option>
+                    <option value="3">艺术家3</option>
+                    <option value="4">自动识别</option>
+                </select>
+
+                <label for="album">专辑</label>
+                <select id="album" name="album">
+                    <!-- 这里可以通过Django模板动态填充专辑列表 -->
+                    <option value="1">专辑1</option>
+                    <option value="2">专辑2</option>
+                    <option value="3">专辑3</option>
+                    <option value="4">自动识别</option>
+                </select>
+
+                <label for="audio_file">音频文件</label>
+                <input type="file" id="audio_file" name="audio_file" accept="audio/*" required>
+
+                <label for="duration">时长</label>
+                <input type="text" id="duration" name="duration" placeholder="格式: HH:MM:SS" required>
+
+                <label for="lyrics">歌词</label>
+                <textarea id="lyrics" name="lyrics" rows="4"></textarea>
+
+                <label for="genre">流派</label>
+                <input type="text" id="genre" name="genre">
+
+                <label for="language">语言</label>
+                <input type="text" id="language" name="language">
+
+                <label for="release_date">发行日期</label>
+                <input type="date" id="release_date" name="release_date">
+
+                <button type="submit">上传</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{.static/script.js"></script>
+  <script>
+        const form = document.querySelector('.upload-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            })
+           .then(response => {
+                if (response.ok) {
+                    alert('上传成功，即将返回主页');
+                    window.location.href = '/';  // 重定向到主页
+                } else {
+                    alert('上传失败，请检查输入信息');
+                    window.location.href = '/';
+                }
+            })
+           .catch(error => {
+                alert('上传过程中出现错误，请稍后再试');
+                window.location.href = '/';
+            });
+        });
+    </script>
+
+</body>
+</html>
