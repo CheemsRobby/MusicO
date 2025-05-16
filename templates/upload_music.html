@@ -1,13 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>音乐上传</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <style>
-        /* 复用 index.html 的样式 */
         * {
             margin: 0;
             padding: 0;
@@ -28,13 +28,15 @@
             height: 100vh;
             background-color: #111111;
             padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
         }
 
         .logo {
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 40px;
-            color: #ffffff;
+            color: #ff5500;
+            text-align: center;
         }
 
         .nav-item {
@@ -48,9 +50,14 @@
             transition: all 0.3s;
         }
 
+        .nav-item i {
+            margin-right: 10px;
+        }
+
         .nav-item:hover {
             background-color: #222;
             color: #fff;
+            transform: translateX(5px);
         }
 
         .main-content {
@@ -65,116 +72,83 @@
             margin-bottom: 40px;
         }
 
-        .upload-form {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 24px;
-        }
-
-        .upload-form label {
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .upload-form input[type="file"],
-        .upload-form input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 16px;
-            border: none;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-        }
-
-        .upload-form input[type="submit"] {
-            background-color: #ff5500;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 20px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .upload-form input[type="submit"]:hover {
-            background-color: #ff6622;
-            * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        .body{
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-            color: #ffffff;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 240px;
-            height: 100vh;
-            background-color: #111111;
-            padding: 20px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 40px;
-            color: #ffffff;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            color: #888;
-            text-decoration: none;
-            margin-bottom: 8px;
-            border-radius: 6px;
-            transition: all 0.3s;
-        }
-
-        .nav-item:hover {
-            background-color: #222;
-            color: #fff;
-        }
-
-        .main-content {
-            margin-left: 240px;
-            padding: 30px;
-        }
-
         .upload-container {
             background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
             border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .upload-container h2 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #ff5500;
         }
 
         .upload-form label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .upload-form input,
-        .upload-form select {
+        .upload-form select,
+        .upload-form textarea {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            background-color: #333;
+            color: #fff;
+            transition: all 0.3s;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .upload-form input:focus,
+        .upload-form select:focus,
+        .upload-form textarea:focus {
+            outline: none;
+            box-shadow: 0 0 5px #ff5500;
+        }
+
+        /* 下拉菜单样式 */
+        .upload-form select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23fff' class='bi bi-caret-down-fill' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        .upload-form select option {
             background-color: #333;
             color: #fff;
         }
@@ -183,33 +157,41 @@
             background-color: #ff5500;
             color: #fff;
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 15px 30px;
+            border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 16px;
+            font-weight: 600;
+            display: block;
+            margin: 0 auto;
+            animation: slideIn 0.5s ease-out;
         }
 
         .upload-form button:hover {
             background-color: #ff6a24;
-        }
-
+            transform: scale(1.05);
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <div class="logo">MUSIC+</div>
         <nav>
-            <a href="/" class="nav-item">首页</a>
-            <a href="#" class="nav-item" id="discovery-link">发现</a>
-            <a href="{% url 'upload_music' %}" class="nav-item">库</a>
-
+            <a href="/" class="nav-item">
+                <i class="fas fa-home"></i> 首页
+            </a>
+            <a href="#" class="nav-item" id="discovery-link">
+                <i class="fas fa-compass"></i> 发现
+            </a>
+            <a href="{% url 'upload_music' %}" class="nav-item">
+                <i class="fas fa-music"></i> 库
+            </a>
         </nav>
     </div>
 
-
- <div class="main-content">
-
+    <div class="main-content">
         <div class="upload-container">
             <h2>上传新音乐</h2>
             <form class="upload-form" action="#" method="post" enctype="multipart/form-data">
@@ -253,36 +235,38 @@
                 <label for="release_date">发行日期</label>
                 <input type="date" id="release_date" name="release_date">
 
-                <button type="submit">上传</button>
+                <button type="submit">
+                    <i class="fas fa-upload"></i> 上传
+                </button>
             </form>
         </div>
     </div>
 
-    <script src="{.static/script.js"></script>
-  <script>
+    <script src="{% static 'script.js' %}"></script>
+    <script>
         const form = document.querySelector('.upload-form');
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', function (event) {
             event.preventDefault();
             const formData = new FormData(this);
             fetch(this.action, {
                 method: 'POST',
                 body: formData
             })
-           .then(response => {
-                if (response.ok) {
-                    alert('上传成功，即将返回主页');
-                    window.location.href = '/';  // 重定向到主页
-                } else {
-                    alert('上传失败，请检查输入信息');
+               .then(response => {
+                    if (response.ok) {
+                        alert('上传成功，即将返回主页');
+                        window.location.href = '/';  // 重定向到主页
+                    } else {
+                        alert('上传失败，请检查输入信息');
+                        window.location.href = '/';
+                    }
+                })
+               .catch(error => {
+                    alert('上传过程中出现错误，请稍后再试');
                     window.location.href = '/';
-                }
-            })
-           .catch(error => {
-                alert('上传过程中出现错误，请稍后再试');
-                window.location.href = '/';
-            });
+                });
         });
     </script>
-
 </body>
+
 </html>
