@@ -800,4 +800,42 @@ chatInput.addEventListener('keypress', (e) => {
             chatInput.value = '';
         }
     }
-}); 
+});
+// 为所有音乐卡片添加播放覆盖层和点击事件
+document.querySelectorAll('.music-card').forEach(card => {
+    const overlay = document.createElement('div');
+    overlay.className = 'play-overlay';
+    overlay.innerHTML = '<div class="play-button"><i class="fas fa-play"></i></div>';
+
+    const imgContainer = card.querySelector('img').parentElement;
+    imgContainer.style.position = 'relative';
+    imgContainer.appendChild(overlay);
+
+    // 为图片添加点击事件
+    card.querySelector('img').addEventListener('click', () => {
+        window.location.href = "player";
+    });
+
+    // 为播放按钮添加点击事件
+    overlay.addEventListener('click', () => {
+        window.location.href = "player";
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 为音乐卡片中的图片和播放按钮添加点击事件
+    const musicCards = document.querySelectorAll('.music-card');
+    musicCards.forEach(card => {
+        const img = card.querySelector('img');
+        const playOverlay = card.querySelector('.play-overlay');
+
+        img.addEventListener('click', function() {
+            // 跳转到播放界面，这里假设播放界面的 URL 为 /player/
+            window.location.href = "player";
+        });
+
+        playOverlay.addEventListener('click', function() {
+            window.location.href = "player";
+        });
+    });
+});

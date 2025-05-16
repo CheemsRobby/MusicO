@@ -1,204 +1,355 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>音乐播放</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <style>
+        /* 复用 index.html 的样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<div class="player-container">
-    <!-- 音乐信息区域 -->
-    <div class="music-info">
-        <div class="cover-image">
-            <img src="/static/images/default-cover.jpg" alt="歌曲封面">
-        </div>
-        <div class="song-details">
-            <h1 class="song-title">歌曲名称</h1>
-            <p class="artist">演唱者：歌手名</p>
-            <p class="genre">流派：流行</p>
-            <div class="action-buttons">
-                <button class="download-btn">
-                    <i class="fas fa-download"></i> 下载
-                </button>
-                <button class="like-btn">
-                    <i class="fas fa-heart"></i> 收藏
-                </button>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background-color: #111111;
+            padding: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #ffffff;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            color: #888;
+            text-decoration: none;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .main-content {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        /* 播放界面特有的样式 */
+        .player-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .music-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .cover-image img {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .song-details {
+            flex: 1;
+        }
+
+        .song-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .artist,
+        .genre {
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .download-btn,
+        .like-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .like-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .player-controls {
+            margin: 20px 0;
+        }
+
+        .progress-container {
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .progress {
+            height: 100%;
+            background: #ff5500;
+            border-radius: 2px;
+            width: 0%;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .play-btn {
+            font-size: 30px;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-slider {
+            width: 100px;
+        }
+
+        .lyrics-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .lyrics-content {
+            margin-top: 20px;
+            line-height: 2;
+        }
+
+        .lyric-line {
+            margin: 5px 0;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">MUSIC+</div>
+        <nav>
+            <a href="/" class="nav-item">首页</a>
+            <a href="#" class="nav-item" id="discovery-link">发现</a>
+            {% if user.is_staff %}
+            <a href="{% url 'upload_music' %}" class="nav-item">库</a>
+            {% endif %}
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header class="header">
+            <h1 class="section-title">音乐播放</h1>
+            <div class="header-right">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="搜索音乐、歌手、专辑...">
+                    <button class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                {% if not user.is_authenticated %}
+                <a href="{% url 'login' %}" class="header-button">登录</a>
+                <a href="{% url 'register' %}" class="header-button">注册</a>
+                {% else %}
+                <a href="{% url 'logout' %}" class="header-button">退出登录</a>
+                {% endif %}
+            </div>
+        </header>
+
+        <div class="player-container">
+            <!-- 音乐信息区域 -->
+            <div class="music-info">
+                <div class="cover-image">
+                    <img src="https://picsum.photos/400/300?random=9" alt="歌曲封面">
+                </div>
+                <div class="song-details">
+                    <h1 class="song-title">歌曲名称</h1>
+                    <p class="artist">演唱者：歌手名</p>
+                    <p class="genre">流派：流行</p>
+                    <div class="action-buttons">
+                        <button class="download-btn">
+                            <i class="fas fa-download"></i> 下载
+                        </button>
+                        <button class="like-btn">
+                            <i class="fas fa-heart"></i> 收藏
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 播放控制区域 -->
+            <div class="player-controls">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress"></div>
+                    </div>
+                    <div class="time-info">
+                        <span class="current-time">0:00</span>
+                        <span class="duration">3:45</span>
+                    </div>
+                </div>
+                <div class="control-buttons">
+                    <button class="control-btn">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-btn play-btn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="control-btn">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <div class="volume-control">
+                        <i class="fas fa-volume-up"></i>
+                        <input type="range" class="volume-slider" min="0" max="100" value="100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 歌词区域 -->
+            <div class="lyrics-container">
+                <h3>歌词</h3>
+                <div class="lyrics-content">
+                    <p class="lyric-line">请现在库中上传音乐</p>
+                    <p class="lyric-line">.....将会自动匹配歌词</p>
+                    <p class="lyric-line">.....</p>
+                </div>
             </div>
         </div>
     </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取DOM元素
+        const progressBar = document.querySelector('.progress');
+        const currentTimeElement = document.querySelector('.current-time');
+        const durationElement = document.querySelector('.duration');
+        const playBtn = document.querySelector('.play-btn');
 
-    <!-- 播放控制区域 -->
-    <div class="player-controls">
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress"></div>
-            </div>
-            <div class="time-info">
-                <span class="current-time">0:00</span>
-                <span class="duration">3:45</span>
-            </div>
-        </div>
-        <div class="control-buttons">
-            <button class="control-btn">
-                <i class="fas fa-step-backward"></i>
-            </button>
-            <button class="control-btn play-btn">
-                <i class="fas fa-play"></i>
-            </button>
-            <button class="control-btn">
-                <i class="fas fa-step-forward"></i>
-            </button>
-            <div class="volume-control">
-                <i class="fas fa-volume-up"></i>
-                <input type="range" class="volume-slider" min="0" max="100" value="100">
-            </div>
-        </div>
-    </div>
+        // 歌曲总时长（秒）
+        const totalDuration = 3 * 60 + 45; // 3:45
+        let currentTime = 0;
+        let isPlaying = false;
+        let timer;
 
-    <!-- 歌词区域 -->
-    <div class="lyrics-container">
-        <h3>歌词</h3>
-        <div class="lyrics-content">
-            <p class="lyric-line">这是第一行歌词</p>
-            <p class="lyric-line">这是第二行歌词</p>
-            <p class="lyric-line">这是第三行歌词</p>
-        </div>
-    </div>
-</div>
+        // 格式化时间为 MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }
 
-<style>
-.player-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
+        // 更新进度条和时间显示
+        function updateProgress() {
+            currentTime = (currentTime + 1) % (totalDuration + 1); // 循环播放
 
-.music-info {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 30px;
-}
+            // 更新进度条宽度
+            const progressPercent = (currentTime / totalDuration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
 
-.cover-image img {
-    width: 200px;
-    height: 200px;
-    border-radius: 10px;
-    object-fit: cover;
-}
+            // 更新时间显示
+            currentTimeElement.textContent = formatTime(currentTime);
+        }
 
-.song-details {
-    flex: 1;
-}
+        // 启动定时器（每秒更新一次）
+        timer = setInterval(updateProgress, 1000);
 
-.song-title {
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: #333;
-}
+        // 播放按钮点击事件（可选，保持原有功能）
+        playBtn.addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            playBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
 
-.artist, .genre {
-    color: #666;
-    margin-bottom: 5px;
-}
+            // 如果需要暂停进度条，可以在这里控制定时器
+             if (isPlaying) {
+                 timer = setInterval(updateProgress, 1000);
+             } else {
+                 clearInterval(timer);
+             }
+        });
 
-.action-buttons {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-}
-
-.download-btn, .like-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.download-btn {
-    background: #4CAF50;
-    color: white;
-}
-
-.like-btn {
-    background: #f44336;
-    color: white;
-}
-
-.player-controls {
-    margin: 20px 0;
-}
-
-.progress-container {
-    margin-bottom: 10px;
-}
-
-.progress-bar {
-    height: 4px;
-    background: #eee;
-    border-radius: 2px;
-    cursor: pointer;
-}
-
-.progress {
-    height: 100%;
-    background: #4CAF50;
-    border-radius: 2px;
-    width: 0%;
-}
-
-.time-info {
-    display: flex;
-    justify-content: space-between;
-    color: #666;
-    font-size: 12px;
-}
-
-.control-buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.control-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #333;
-}
-
-.play-btn {
-    font-size: 30px;
-}
-
-.volume-control {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.volume-slider {
-    width: 100px;
-}
-
-.lyrics-container {
-    margin: 30px 0;
-    padding: 20px;
-    background: #f5f5f5;
-    border-radius: 10px;
-}
-
-.lyrics-content {
-    margin-top: 20px;
-    line-height: 2;
-}
-
-.lyric-line {
-    margin: 5px 0;
-    color: #666;
-}
-</style>
-{% endblock %} 
+        // 设置总时长（仅显示，不影响进度）
+        durationElement.textContent = formatTime(totalDuration);
+    });
+</script>
+</body>
+</html>

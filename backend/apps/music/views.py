@@ -217,4 +217,13 @@ def like_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
     comment.likes += 1
     comment.save()
-    return JsonResponse({'success': True, 'likes': comment.likes}) 
+    return JsonResponse({'success': True, 'likes': comment.likes})
+
+from django.shortcuts import render
+
+def index(request):
+    return render(request, 'index.html')
+
+def player(request):
+    return render(request, 'player.html')
+

@@ -105,3 +105,7 @@ def user_register(request):
 def user_logout(request):
     logout(request)
     return redirect('index')
+
+from django.shortcuts import render
+def player(request):
+    return render(request, 'player.html')
